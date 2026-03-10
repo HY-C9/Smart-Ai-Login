@@ -3,69 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HY System Login</title>
+    <title>System Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="https://img5.pic.in.th/file/secure-sv1/imagea24209f2083f58bc.md.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Prompt', sans-serif; }
         
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        .pop-up { animation: popUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes popUp {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        /* สร้างพื้นหลังโทนสีม่วงแบบในรูป (สามารถเปลี่ยนเป็น background-image รูปวิวป่าได้ถ้ามี) */
+        .bg-custom-gradient {
+            background: linear-gradient(135deg, #131446 0%, #241480 50%, #3e3b97 100%);
         }
 
-        .bg-login-screen {
-            background-color: #0f172a;
-            background-image: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+        /* เอฟเฟกต์กล่องกระจกใส */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* แก้ปัญหาสีพื้นหลังตอนเบราว์เซอร์จำรหัสผ่าน (Autofill) */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px #c19ee2 inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
         }
     </style>
 </head>
-<body class="min-h-screen bg-login-screen text-slate-800 flex items-center justify-center px-4 overflow-hidden relative">
+<body class="min-h-screen bg-custom-gradient text-white flex items-center justify-center px-4 relative overflow-hidden">
 
-    <div class="absolute inset-0 overflow-hidden z-0 pointer-events-none">
-        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#0F767D]/20 rounded-full blur-[120px]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]"></div>
-    </div>
-
-    <div class="bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl w-full max-w-[400px] p-10 flex flex-col items-center pop-up border border-slate-700/50 relative z-10">
+    <div class="glass-panel rounded-[2rem] w-full max-w-[400px] p-8 md:p-10 flex flex-col items-center relative z-10 transition-transform duration-500 hover:scale-[1.01]">
         
-        <div class="w-20 h-20 bg-gradient-to-br from-[#0F767D] to-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-lg transform rotate-3 border border-slate-600">
-            <svg class="w-10 h-10 text-white transform -rotate-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-        </div>
+        <img src="https://img5.pic.in.th/file/secure-sv1/imagea24209f2083f58bc.md.png" alt="System Logo" class="w-24 h-auto mb-2 drop-shadow-xl">
         
-        <h2 class="text-3xl font-bold text-white mb-1 tracking-tight">SYSTEM LOGIN</h2>
-        <p class="text-xs text-slate-400 mb-8 text-center uppercase tracking-widest">Enterprise Smart Contract</p>
+        <h2 class="text-3xl font-bold text-white mb-8 tracking-wide">SYSTEM LOGIN</h2>
 
         <form id="login-form" class="w-full space-y-5">
-            <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1.5 tracking-wider uppercase">Username / ID</label>
-                <input type="text" id="login-username" required placeholder="Enter your ID" class="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-[#0F767D] focus:border-transparent outline-none text-white text-sm transition-all placeholder-slate-600">
+            
+            <div class="relative">
+                <input type="text" id="login-username" required placeholder="Username" 
+                    class="w-full px-5 py-3.5 bg-transparent border border-white/40 rounded-full focus:ring-2 focus:ring-white/60 focus:border-transparent outline-none text-white text-sm transition-all placeholder-white/70">
+                <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                </div>
             </div>
-            <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1.5 tracking-wider uppercase">Password</label>
-                <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-[#0F767D] focus:border-transparent outline-none text-white text-sm transition-all placeholder-slate-600">
+
+            <div class="relative">
+                <input type="password" id="login-password" required placeholder="Password" 
+                    class="w-full px-5 py-3.5 bg-transparent border border-white/40 rounded-full focus:ring-2 focus:ring-white/60 focus:border-transparent outline-none text-white text-sm transition-all placeholder-white/70">
+                <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg>
+                </div>
             </div>
             
-            <div id="login-status" class="hidden text-xs font-medium text-center p-3 rounded-lg border"></div>
+            <div class="flex items-center justify-between text-[13px] text-white/90 px-2 pt-1 pb-2">
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" class="mr-2 rounded bg-transparent border-white/40 text-purple-600 focus:ring-purple-500">
+                    จดจำรหัสผ่าน
+                </label>
+                <a href="https://t.me/x_Haoyun66" target="_blank" class="hover:text-white hover:underline transition-colors">ลืมรหัสผ่าน</a>
+            </div>
 
-            <button type="submit" id="submit-btn" class="w-full mt-2 py-3.5 rounded-xl bg-gradient-to-r from-[#0F767D] to-[#0a4f54] hover:from-[#0c5e64] hover:to-[#083b3f] text-white text-sm font-bold transition-all shadow-[0_0_20px_rgba(15,118,125,0.3)] hover:shadow-[0_0_25px_rgba(15,118,125,0.5)] active:scale-[0.98]">
-                เข้าสู่ระบบ
+            <div id="login-status" class="hidden text-sm font-medium text-center p-3 rounded-xl border backdrop-blur-md"></div>
+
+            <button type="submit" id="submit-btn" class="w-full py-3.5 rounded-full bg-white hover:bg-gray-100 text-[#581c87] text-[15px] font-bold transition-all shadow-lg active:scale-[0.98]">
+                Login
             </button>
+            
+            <div class="text-center text-[13px] text-white/90 mt-6">
+                ยังไม่มีบัญชีใช่ไหม? <a href="https://t.me/x_Haoyun66" target="_blank" class="text-white font-bold hover:underline ml-1">ติดต่อลงทะเบียน</a>
+            </div>
         </form>
     </div>
 
     <script>
-        // ใส่ URL Web App ของคุณที่นี่
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzuV8aqMNFhtf9TI-bt9DC59bD9J2-CEfWj4ebHnFpu53gCOBCpcYm1QmyT6d1F70Lx/exec';
-        
-        // ลิงก์ปลายทางเมื่อเข้าสู่ระบบสำเร็จ
         const DESTINATION_URL = 'https://hy-c9.github.io/Smart-Ai/';
 
-        // เช็คว่าเคยล็อคอินทิ้งไว้และยังไม่หมดอายุไหม ถ้าใช่ให้เด้งไปเว็บหลักเลยทันที
         window.onload = () => {
             const currentUser = JSON.parse(localStorage.getItem('active_user'));
             if (currentUser && new Date().getTime() <= currentUser.expireAt) {
@@ -82,15 +101,13 @@
 
             // เปลี่ยนสถานะปุ่มเป็นกำลังโหลด
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `<svg class="animate-spin h-5 w-5 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+            submitBtn.innerHTML = `<svg class="animate-spin h-5 w-5 mx-auto text-[#581c87]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
             statusBox.classList.add('hidden');
 
             try {
-                // ดึงข้อมูลจากฐานข้อมูล Google Sheets
                 const response = await fetch(WEB_APP_URL);
                 const dbUsers = await response.json();
                 
-                // ค้นหาผู้ใช้ที่ตรงกับที่กรอก
                 const foundUser = dbUsers.find(u => u.username === user && u.password === pass);
 
                 if (foundUser) {
@@ -98,10 +115,7 @@
                         showStatus('❌ สิทธิ์การใช้งานหมดอายุ! กรุณาติดต่อผู้ดูแลระบบ', 'error');
                         resetButton();
                     } else {
-                        // บันทึกข้อมูลลง LocalStorage เพื่อให้ระบบจำ
                         localStorage.setItem('active_user', JSON.stringify(foundUser));
-                        
-                        // เด้งไปหน้าหลักทันทีแบบไม่มีดีเลย์ (ไม่ต้องโชว์ข้อความสำเร็จแล้ว)
                         window.location.replace(DESTINATION_URL);
                     }
                 } else {
@@ -111,7 +125,7 @@
 
             } catch (error) {
                 console.error("การเชื่อมต่อล้มเหลว:", error);
-                showStatus('⚠️ ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณาลองใหม่', 'error');
+                showStatus('⚠️ ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่ หรือเช็คเน็ต', 'error');
                 resetButton();
             }
         });
@@ -119,17 +133,17 @@
         function showStatus(message, type) {
             const statusBox = document.getElementById('login-status');
             statusBox.textContent = message;
-            statusBox.classList.remove('hidden', 'bg-red-500/10', 'text-red-400', 'border-red-500/20');
+            statusBox.classList.remove('hidden', 'bg-red-500/50', 'text-white', 'border-red-400/50');
             
             if (type === 'error') {
-                statusBox.classList.add('bg-red-500/10', 'text-red-400', 'border-red-500/20');
+                statusBox.classList.add('bg-red-500/50', 'text-white', 'border-red-400/50');
             }
         }
 
         function resetButton() {
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = false;
-            submitBtn.innerHTML = 'เข้าสู่ระบบ';
+            submitBtn.innerHTML = 'Login';
         }
     </script>
 </body>
