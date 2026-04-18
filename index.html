@@ -10,12 +10,10 @@
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Prompt', sans-serif; }
         
-        /* สร้างพื้นหลังโทนสีม่วงแบบในรูป (สามารถเปลี่ยนเป็น background-image รูปวิวป่าได้ถ้ามี) */
         .bg-custom-gradient {
             background: linear-gradient(135deg, #131446 0%, #241480 50%, #3e3b97 100%);
         }
 
-        /* เอฟเฟกต์กล่องกระจกใส */
         .glass-panel {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(12px);
@@ -24,7 +22,6 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
 
-        /* แก้ปัญหาสีพื้นหลังตอนเบราว์เซอร์จำรหัสผ่าน (Autofill) */
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus, 
@@ -81,10 +78,27 @@
         </form>
     </div>
 
-    <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzuV8aqMNFhtf9TI-bt9DC59bD9J2-CEfWj4ebHnFpu53gCOBCpcYm1QmyT6d1F70Lx/exec';
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // คอนฟิกของคุณที่ได้มา
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0Mxq3iMqQgPtaDZ7tC1QmV1qgQPAmbNQ",
+            authDomain: "smart-ai-e4c26.firebaseapp.com",
+            projectId: "smart-ai-e4c26",
+            storageBucket: "smart-ai-e4c26.firebasestorage.app",
+            messagingSenderId: "712287111788",
+            appId: "1:712287111788:web:197e4723bf5d6125bf2649",
+            measurementId: "G-ES18RCZJN1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         const DESTINATION_URL = 'https://hy-c9.github.io/Smart-Ai/';
 
+        // ตรวจสอบว่าเคยล็อคอินไว้หรือยัง
         window.onload = () => {
             const currentUser = JSON.parse(localStorage.getItem('active_user'));
             if (currentUser && new Date().getTime() <= currentUser.expireAt) {
@@ -99,23 +113,38 @@
             const statusBox = document.getElementById('login-status');
             const submitBtn = document.getElementById('submit-btn');
 
-            // เปลี่ยนสถานะปุ่มเป็นกำลังโหลด
+            // เปลี่ยนปุ่มเป็นกำลังโหลด
             submitBtn.disabled = true;
             submitBtn.innerHTML = `<svg class="animate-spin h-5 w-5 mx-auto text-[#581c87]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
             statusBox.classList.add('hidden');
 
             try {
-                const response = await fetch(WEB_APP_URL);
-                const dbUsers = await response.json();
-                
-                const foundUser = dbUsers.find(u => u.username === user && u.password === pass);
+                // ดึงข้อมูลจากคอลเลกชัน "users" เฉพาะคนที่ username ตรงกัน
+                const usersRef = collection(db, "users");
+                const q = query(usersRef, where("username", "==", user));
+                const querySnapshot = await getDocs(q);
+
+                let foundUser = null;
+
+                querySnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    if (userData.password === pass) {
+                        foundUser = userData;
+                    }
+                });
 
                 if (foundUser) {
-                    if (new Date().getTime() > foundUser.expireAt) {
+                    const expireTimeMs = foundUser.expireAt.toMillis();
+                    
+                    if (new Date().getTime() > expireTimeMs) {
                         showStatus('❌ สิทธิ์การใช้งานหมดอายุ! กรุณาติดต่อผู้ดูแลระบบ', 'error');
                         resetButton();
                     } else {
-                        localStorage.setItem('active_user', JSON.stringify(foundUser));
+                        const userToSave = {
+                            username: foundUser.username,
+                            expireAt: expireTimeMs
+                        };
+                        localStorage.setItem('active_user', JSON.stringify(userToSave));
                         window.location.replace(DESTINATION_URL);
                     }
                 } else {
@@ -125,7 +154,11 @@
 
             } catch (error) {
                 console.error("การเชื่อมต่อล้มเหลว:", error);
-                showStatus('⚠️ ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่ หรือเช็คเน็ต', 'error');
+                if(error.code === 'permission-denied'){
+                    showStatus('⚠️ ไม่ได้รับสิทธิ์', 'error');
+                } else {
+                    showStatus('⚠️ กรุณาลองใหม่', 'error');
+                }
                 resetButton();
             }
         });
